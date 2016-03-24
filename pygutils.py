@@ -1,7 +1,5 @@
 from optparse import OptionParser as Opt
 import re
-import sys
-import time
 
 GDOC_PATTERN = r"https://docs.google.com/document/d/(?P<DOC_ID>(\w|_|-|\d)+)(/\w*)?"
 DOC_FORMATS = ["docx", "odt", "rtf", "pdf", "txt", "html"]
@@ -30,20 +28,13 @@ def get_lines_from_file(file_path):
     return lines
 
 def manage_parse_args(options, args):
-    args = map(lambda x: x.replace('\n',''), args)
-    #print options
-    #print args
     if options['gen_id']:
         print get_gdoc_id(args[0])
     if not(options['t_format'] is None):
         g_id = get_gdoc_id(args[0])
         print get_download_link(g_id, options['t_format'])
 
-#def main(sinput):
 def main():
-    # add pipe support
-    # ##
-    in_args = sys.argv[1:]
     parser = Opt(usage="Usage: %prog [options] arguments",
         version="%prog 1.0")
     parser.add_option("-g", "--get-id",
@@ -62,16 +53,6 @@ def main():
         default=False)
     (options_p, args) = parser.parse_args()
     options = eval(options_p.__str__())
-    if options['pipe_enabled']:
-        sinput = sys.stdin
-        adpinput = map(lambda x: str(x) ,sinput)
-        #sinput.close()
-        #print "Input pipe: %s" % sinput
-        a_input = adapt(adpinput)
-        parse_in = in_args + a_input
-        #print "Comand: %s" % parse_in
-        (options_p, args) = parser.parse_args(parse_in)
-        options = eval(options_p.__str__())
     if not(options['ifile'] is None):
         for parse_line in get_lines_from_file(options['ifile']):
             p_line = parse_line.split(' ')
@@ -79,25 +60,16 @@ def main():
             op2, arg2 = parser.parse_args(p_line)
             execute_parse(op2, arg2)
     else:
-        execute_parse(options_p, args)
+        if len(args)!=0:
+            execute_parse(options_p, args)
+        else:
+            print "Ingrese argumentos"
 
 def execute_parse(p_options, args):
+    print p_options
+    print args
     options = eval(p_options.__str__())
     manage_parse_args(options, args)
 
-def adapt(lines):
-    linput = []
-    for line in lines:
-        linput += line.split(' ')
-    return linput
-
 if __name__ == '__main__':
-    #lines2 = []
-    #while True:
-    #    line = sys.stdin.readline()
-    #    if not line:
-    #        break
-    #    else:
-    #        lines2.append(line)
-    #main(lines2)
     main()
