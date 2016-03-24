@@ -1,3 +1,4 @@
+#! /usr/bin/python
 from optparse import OptionParser as Opt
 import re
 
@@ -48,9 +49,6 @@ def main():
     parser.add_option("-l", "--link",
         dest="t_format",
         default=None)
-    parser.add_option("-p", "--pipe-enabled",
-        action="store_true",
-        default=False)
     (options_p, args) = parser.parse_args()
     options = eval(options_p.__str__())
     if not(options['ifile'] is None):
@@ -63,11 +61,9 @@ def main():
         if len(args)!=0:
             execute_parse(options_p, args)
         else:
-            print "Ingrese argumentos"
+            parser.error("Ingrese argumentos")
 
 def execute_parse(p_options, args):
-    print p_options
-    print args
     options = eval(p_options.__str__())
     manage_parse_args(options, args)
 
